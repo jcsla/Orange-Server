@@ -1,5 +1,9 @@
+# -*- coding: cp949 -*-
+
+import urllib
 import urllib2
 import json
+import re
 
 from django.http import HttpResponse
 from bs4 import BeautifulSoup
@@ -37,7 +41,7 @@ def get_music_video_information(request):
     singer = request.GET['singer'].encode('utf8')
     title = request.GET['title'].encode('utf8')
 
-    url = 'http://www.youtube.com/results?search_query=' + singer + title
+    url = 'http://www.youtube.com/results?search_query=' + urllib.quote(singer) + '+' + urllib.quote(title)
     handle = urllib2.urlopen(url)
     data = handle.read()
     beautifulSoup = BeautifulSoup(data)
