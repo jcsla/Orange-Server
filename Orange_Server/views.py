@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from Orange_Server.models import MelonObject
 
-from Orange_Server.yongjun import get_billboard_chart
+#from Orange_Server.yongjun import get_billboard_chart
 
 def get_melon_chart(request):
     url = 'http://www.melon.com/chart/index.htm'
@@ -28,7 +28,15 @@ def get_melon_chart(request):
     for i in range(len(melonChart)):
         melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
 
+    #return HttpResponse(singer)
     return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
 
 def get_billboard_chart(request):
-    return HttpResponse("")
+    url = 'http://www.m.billboard.com/v/ChartSingles/Hot2255'
+
+    handle = urllib2.urlopen(url)
+    data = handle.read()
+    beautifulSoup = BeautifulSoup(data)
+    title = beautifulSoup.find_all('h1')
+    
+    return HttpResponse(title)

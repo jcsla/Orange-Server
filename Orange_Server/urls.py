@@ -4,6 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from Orange_Server.views import get_melon_chart
+from Orange_Server.views import get_billboard_chart
 
 urlpatterns = patterns('',
     # Examples:
@@ -11,5 +12,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^getMelonChart', get_melon_chart)
+    url(r'^getMelonChart', get_melon_chart),
+    url(r'^getBillboardChart', get_billboard_chart)
 )
