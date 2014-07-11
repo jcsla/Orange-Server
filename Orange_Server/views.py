@@ -27,6 +27,7 @@ def get_melon_chart(request):
     for i in range(len(melonChart)):
         melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
 
+    #return HttpResponse(singer)
     return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
 
 def get_billboard_chart(request):
