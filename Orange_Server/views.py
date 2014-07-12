@@ -59,3 +59,25 @@ def get_music_video_information(request):
                                      "url" : youtubeObject.url}
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
+
+def search_music_video_information(request):
+    query = request.GET['query'].encode('utf8')
+
+    url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query)
+    handle = urllib2.urlopen(url)
+    data = handle.read()
+    beautifulSoup = BeautifulSoup(data)
+    title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
+    url = beautifulSoup.find_all('ol', {'class':'item-section'})
+
+    resultTitle = title[0].text
+    resultURl = 'http://www.youtube.com' + url[0].find('a')['href']
+
+    youtubeObject = YouTubeObject()
+    youtubeObject.title = resultTitle
+    youtubeObject.url = resultURl
+
+    musicVideoInformationForJson = { "title" : youtubeObject.title,
+                                     "url" : youtubeObject.url}
+
+    return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))

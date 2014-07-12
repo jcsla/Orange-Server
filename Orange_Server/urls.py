@@ -7,6 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from Orange_Server.views import get_melon_chart
 from Orange_Server.views import get_music_video_information
+from Orange_Server.views import search_music_video_information
 
 urlpatterns = patterns('',
     # Examples:
@@ -16,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^getMelonChart', get_melon_chart),
     url(r'^getMusicVideoInformation', get_music_video_information),
+    url(r'^searchMusicVideoInformation', search_music_video_information),
 )
 
 urlpatterns += staticfiles_urlpatterns()
