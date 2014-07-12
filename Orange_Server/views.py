@@ -4,9 +4,12 @@ import urllib
 import urllib2
 import json
 import re
+import datetime
 
 from django.http import HttpResponse
 from bs4 import BeautifulSoup
+
+from datetime import timedelta, date
 
 from Orange_Server.models import MelonObject
 from Orange_Server.models import YouTubeObject
@@ -35,7 +38,59 @@ def get_melon_chart(request):
     return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
 
 def get_billboard_chart(request):
-    return HttpResponse("")
+    url = 'http://www.billboard.com/charts/hot-100?page=%d'
+
+    melonChart = []
+    for i in range(0, 10):
+        handle = urllib2.urlopen(url % i)
+        data = handle.read()
+        bs = BeautifulSoup(data)
+	title = bs.find_all('h1')
+	singer = bs.find_all('p', {'class':'chart_info'})
+
+	for j in range(0, 10):
+	    melonObject = MelonObject()
+	    melonObject.title = title[j+1].text.strip()
+	    melonObject.singer = singer[j].find('a').text.strip()
+	    melonChart.append(melonObject)
+
+    melonChartForJSON = []
+    for i in range(len(melonChart)):
+	melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
+
+    return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
+
+def get_oricon_chart(request):
+    url = 'http://www.oricon.co.jp/rank/js/w/%s/more/%d/'
+
+    d = datetime.date.today()
+    td = timedelta(days=7-d.weekday())
+    d = d + td
+
+    melonChart = []
+    for i in range(1, 7):
+	handle = urllib2.urlopen(url % (d, i))
+	data = handle.read()
+	bs = BeautifulSoup(data)
+
+	title = bs.find_all('h2')
+	singer = bs.find_all('h3')
+
+	j_max = 10
+	if i < 3:
+	    j_max = 5
+
+	for j in range(0, j_max):
+	    melonObject = MelonObject()
+	    melonObject.title = title[j].text.strip()
+	    melonObject.singer = singer[j].text.strip()
+	    melonChart.append(melonObject)
+
+    melonChartForJSON = []
+    for i in range(len(melonChart)):
+	melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
+
+    return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
 
 def get_music_video_information(request):
     singer = request.GET['singer'].encode('utf8')

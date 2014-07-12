@@ -6,6 +6,8 @@ admin.autodiscover()
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from Orange_Server.views import get_melon_chart
+from Orange_Server.views import get_billboard_chart
+from Orange_Server.views import get_oricon_chart
 from Orange_Server.views import get_music_video_information
 from Orange_Server.views import search_music_video_information
 
@@ -18,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^getMelonChart', get_melon_chart),
     url(r'^getMusicVideoInformation', get_music_video_information),
     url(r'^searchMusicVideoInformation', search_music_video_information),
+    url(r'^getBillboardChart', get_billboard_chart),
+    url(r'^getOriconChart', get_oricon_chart),
 )
 
 urlpatterns += staticfiles_urlpatterns()
