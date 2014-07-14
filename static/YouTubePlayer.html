@@ -1,8 +1,9 @@
 <html>
 <head>
-	<script type="text/javascript" src="http://google.com/jsapi/"></script>
-	<script type="text/javascript">google.load('jquery','1.6.2');</script>
-	<script type="text/javascript">
+	<meta http-equiv="cache-control" content="no-cache">
+	<script src="http://google.com/jsapi/"></script>
+	<script>google.load('jquery','1.6.2');</script>
+	<script>
         var tag = document.createElement('script');
         tag.src = "http://www.youtube.com/player_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -11,17 +12,17 @@
         var player;
         function onYouTubePlayerAPIReady() {
             ytplayer = new YT.Player('player', {
-                height: '390',
-                width: '640',
+                height: '100%',
+                width: '100%',
                 videoId: '9bZkp7q19f0',
                 playerVars: { 'autoplay': 1, 'controls': 0 },
             events: {
-                    'onReady': onPlayerReady,
+                   // 'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
             });
         }
-
+/*
         function updateHTML(elmId, value) {
             document.getElementById(elmId).innerHTML = value;
         }
@@ -35,7 +36,7 @@
                 var videoCurrent = ytplayer.getCurrentTime();
             }
         }
-
+*/
         function playVideo() {
             ytplayer.playVideo();
         }
@@ -48,9 +49,9 @@
             ytplayer.loadVideoById(id);
         }
 
-        function onPlayerReady(event) {
-            setInterval(updatePlayerInfo, 250);
-        }
+        //function onPlayerReady(event) {
+        //    setInterval(updatePlayerInfo, 250);
+        //}
 
         function onPlayerStateChange(event) {
         
@@ -59,16 +60,5 @@
 </head>
 <body>
 	<div id="player"></div>
-    
-	<div id="player-controls">
-        	<ul>
-        		<li class=play><input type="button" value="play" onclick="playVideo();"></li>
-            		<li class=pause><input type="button" value="pause" onclick='pauseVideo();'></li>
-        	</ul>
-	</div>
-	
-	<div id="videoInfo">
-        	<p>Current Time: <span id="videoCurrentTime">0</span> | Duration: <span id="videoDuration">0</span></p>
-	</div>
 </body>
 </html>
