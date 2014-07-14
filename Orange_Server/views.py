@@ -103,12 +103,17 @@ def get_music_video_information(request):
     title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
     url = beautifulSoup.find_all('ol', {'class':'item-section'})
 
+#    infoListForJSON = []
+#    for i in range(len(title)):
     resultTitle = title[0].text
     resultURl = 'http://www.youtube.com' + url[0].find('a')['href']
 
     youtubeObject = YouTubeObject()
     youtubeObject.title = resultTitle
     youtubeObject.url = resultURl
+#    musicVideoInformationForJson = { "title" : youtubeObject.title,
+#      				     "url" : youtubeObject.url}
+#	infoListForJSON.append(youtubeObject)
 
     musicVideoInformationForJson = { "title" : youtubeObject.title,
                                      "url" : youtubeObject.url}
@@ -123,16 +128,12 @@ def search_music_video_information(request):
     data = handle.read()
     beautifulSoup = BeautifulSoup(data)
     title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
-    url = beautifulSoup.find_all('ol', {'class':'item-section'})
+    url = beautifulSoup.find_all('h3', {'class':'yt-lockup-title'})
 
-    resultTitle = title[0].text
-    resultURl = 'http://www.youtube.com' + url[0].find('a')['href']
-
-    youtubeObject = YouTubeObject()
-    youtubeObject.title = resultTitle
-    youtubeObject.url = resultURl
-
-    musicVideoInformationForJson = { "title" : youtubeObject.title,
-                                     "url" : youtubeObject.url}
+    musicVideoInformationForJson = []
+    for i in range(len(title)):
+        resultTitle = title[i].text
+	resultUrl = 'http://www.youtube.com' + url[i].find('a')['href']
+        musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl})
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
