@@ -14,7 +14,7 @@
             ytplayer = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
-                videoId: '9bZkp7q19f0',
+                videoId: '',
                 playerVars: { 'autoplay': 1, 'controls': 0 },
             events: {
                    // 'onReady': onPlayerReady,
@@ -49,6 +49,34 @@
             ytplayer.loadVideoById(id);
         }
 
+	function cueNewVideo(id, startSeconds) {
+		ytplayer.cueVideoById(id, startSeconds);
+	}
+
+	function setVolume(newVolume) {
+		ytplayer.setVolume(newVolume);
+	}
+
+	function getVolume() {
+		return ytplayer.getVolume();
+	}
+
+	function mute() {
+		ytplayer.mute();
+	}
+
+	function unMute() {
+		ytplayer.unMute();
+	}
+
+	function getCurrentTime() {
+		return ytplayer.getCurrentTime();
+	}
+
+	function getDuration() {
+		return ytplayer.getDuration();
+	}
+
         //function onPlayerReady(event) {
         //    setInterval(updatePlayerInfo, 250);
         //}
@@ -58,7 +86,7 @@
         }
 	</script>
 </head>
-<body>
+<body scroll="no" style="margin:0; padding:0">
 	<div id="player"></div>
 </body>
 </html>
