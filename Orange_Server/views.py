@@ -64,7 +64,7 @@ def get_oricon_chart(request):
     url = 'http://www.oricon.co.jp/rank/js/w/%s/more/%d/'
 
     d = datetime.date.today()
-    td = timedelta(days=7-d.weekday())
+    td = timedelta(days=0-d.weekday())
     d = d + td
 
     melonChart = []
