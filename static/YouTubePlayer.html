@@ -77,6 +77,10 @@
 		return ytplayer.getDuration();
 	}
 
+	function seekTo(seconds) {
+		ytplayer.seekTo(seconds, true);
+	}
+
         //function onPlayerReady(event) {
         //    setInterval(updatePlayerInfo, 250);
         //}

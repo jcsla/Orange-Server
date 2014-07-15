@@ -5,6 +5,7 @@ import urllib2
 import json
 import re
 import datetime
+import os
 
 from django.http import HttpResponse
 from bs4 import BeautifulSoup
@@ -29,13 +30,13 @@ def get_melon_chart(request):
     singer = beautifulSoup.find_all('div', {'class':'ellipsis rank02'})
     """
     melonChart = []
-    f = open("Orange_Server/MelonChart.dat", 'r')
+    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
     for i in range(1, 101):
         melonObject = MelonObject()
-        melonObject.title = f.readline()#title[i].text.strip()
-        melonObject.singer = f.readline()#singer[i].find('span').text.strip()
-	melonObject.url = f.readline()
-	melonObject.time = f.readline()
+        melonObject.title = f.readline().strip()#title[i].text.strip()
+        melonObject.singer = f.readline().strip()#singer[i].find('span').text.strip()
+	melonObject.url = f.readline().strip()
+	melonObject.time = f.readline().strip()
 	
         melonChart.append(melonObject)
     f.close()
