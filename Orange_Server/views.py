@@ -20,8 +20,8 @@ import time
 
 def get_melon_chart(request):
     melonChart = []
-#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
-    f = open("Orange_Server/MelonChart.dat", 'r')
+    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
+#    f = open("Orange_Server/MelonChart.dat", 'r')
     for i in range(1, 101):
         melonObject = MelonObject()
         melonObject.title = f.readline().strip()
@@ -40,8 +40,8 @@ def get_melon_chart(request):
 def get_billboard_chart(request):
     billboardChart = []
     
-#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
-    f = open("Orange_Server/BillboardChart.dat", 'r')
+    f = open("/home/jcsla/Orange_Server/Orange_Server/BillboardChart.dat", 'r')
+#    f = open("Orange_Server/BillboardChart.dat", 'r')
     for i in range(1, 101):
         billboardObject = MelonObject()
         billboardObject.title = f.readline().strip()
@@ -61,8 +61,8 @@ def get_billboard_chart(request):
 def get_oricon_chart(request):
     oriconChart = []
 
-#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
-    f = open("Orange_Server/OriconChart.dat", 'r')
+    f = open("/home/jcsla/Orange_Server/Orange_Server/OriconChart.dat", 'r')
+#    f = open("Orange_Server/OriconChart.dat", 'r')
     for i in range(0, 50):
         oriconObject = MelonObject()
         oriconObject.title = f.readline().strip()
