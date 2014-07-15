@@ -15,92 +15,68 @@ from datetime import timedelta, date
 from Orange_Server.models import MelonObject
 from Orange_Server.models import YouTubeObject
 
-
 import thread
 import time    
 
 def get_melon_chart(request):
-    """
-    url = 'http://www.melon.com/chart/index.htm'
-
-    handle = urllib2.urlopen(url)
-    data = handle.read()
-    beautifulSoup = BeautifulSoup(data)
-    title = beautifulSoup.find_all('div', {'class':'ellipsis rank01'})
-    singer = beautifulSoup.find_all('div', {'class':'ellipsis rank02'})
-    """
     melonChart = []
-    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
+#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
+    f = open("Orange_Server/MelonChart.dat", 'r')
     for i in range(1, 101):
         melonObject = MelonObject()
-        melonObject.title = f.readline().strip()#title[i].text.strip()
-        melonObject.singer = f.readline().strip()#singer[i].find('span').text.strip()
+        melonObject.title = f.readline().strip()
+        melonObject.singer = f.readline().strip()
 	melonObject.url = f.readline().strip()
 	melonObject.time = f.readline().strip()
-	
         melonChart.append(melonObject)
+
     f.close()
     melonChartForJSON = []
     for i in range(len(melonChart)):
         melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title, "url": melonChart[i].url, "time": melonChart[i].time})
 
-    #return HttpResponse(singer)
     return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
 
 def get_billboard_chart(request):
-    url = 'http://www.billboard.com/charts/hot-100?page=%d'
+    billboardChart = []
+    
+#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
+    f = open("Orange_Server/BillboardChart.dat", 'r')
+    for i in range(1, 101):
+        billboardObject = MelonObject()
+        billboardObject.title = f.readline().strip()
+        billboardObject.singer = f.readline().strip()
+        billboardObject.url = f.readline().strip()
+        billboardObject.time = f.readline().strip()
+        billboardChart.append(billboardObject)
 
-    melonChart = []
-    for i in range(0, 10):
-        handle = urllib2.urlopen(url % i)
-        data = handle.read()
-        bs = BeautifulSoup(data)
-	title = bs.find_all('h1')
-	singer = bs.find_all('p', {'class':'chart_info'})
+    f.close()
 
-	for j in range(0, 10):
-	    melonObject = MelonObject()
-	    melonObject.title = title[j+1].text.strip()
-	    melonObject.singer = singer[j].find('a').text.strip()
-	    melonChart.append(melonObject)
+    billboardChartForJSON = []
+    for i in range(len(billboardChart)):
+	billboardChartForJSON.append({"singer": billboardChart[i].singer, "title": billboardChart[i].title, "url": billboardChart[i].url, "time": billboardChart[i].time})
 
-    melonChartForJSON = []
-    for i in range(len(melonChart)):
-	melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
-
-    return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
+    return HttpResponse(json.dumps(billboardChartForJSON, ensure_ascii=False))
 
 def get_oricon_chart(request):
-    url = 'http://www.oricon.co.jp/rank/js/w/%s/more/%d/'
+    oriconChart = []
 
-    d = datetime.date.today()
-    td = timedelta(days=0-d.weekday())
-    d = d + td
+#    f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
+    f = open("Orange_Server/OriconChart.dat", 'r')
+    for i in range(0, 50):
+        oriconObject = MelonObject()
+        oriconObject.title = f.readline().strip()
+        oriconObject.singer = f.readline().strip()
+        oriconObject.url = f.readline().strip()
+        oriconObject.time = f.readline().strip()
+        oriconChart.append(oriconObject)
 
-    melonChart = []
-    for i in range(1, 7):
-	handle = urllib2.urlopen(url % (d, i))
-	data = handle.read()
-	bs = BeautifulSoup(data)
+    f.close()
+    oriconChartForJSON = []
+    for i in range(len(oriconChart)):
+        oriconChartForJSON.append({"singer": oriconChart[i].singer, "title": oriconChart[i].title, "url": oriconChart[i].url, "time": oriconChart[i].time})
 
-	title = bs.find_all('h2')
-	singer = bs.find_all('h3')
-
-	j_max = 10
-	if i < 3:
-	    j_max = 5
-
-	for j in range(0, j_max):
-	    melonObject = MelonObject()
-	    melonObject.title = title[j].text.strip()
-	    melonObject.singer = singer[j].text.strip()
-	    melonChart.append(melonObject)
-
-    melonChartForJSON = []
-    for i in range(len(melonChart)):
-	melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
-
-    return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
+    return HttpResponse(json.dumps(oriconChartForJSON, ensure_ascii=False))
 
 def get_music_video_information(request):
     singer = request.GET['singer'].encode('utf8')
