@@ -14,7 +14,12 @@ from datetime import timedelta, date
 from Orange_Server.models import MelonObject
 from Orange_Server.models import YouTubeObject
 
+
+import thread
+import time    
+
 def get_melon_chart(request):
+    """
     url = 'http://www.melon.com/chart/index.htm'
 
     handle = urllib2.urlopen(url)
@@ -22,17 +27,21 @@ def get_melon_chart(request):
     beautifulSoup = BeautifulSoup(data)
     title = beautifulSoup.find_all('div', {'class':'ellipsis rank01'})
     singer = beautifulSoup.find_all('div', {'class':'ellipsis rank02'})
-
+    """
     melonChart = []
+    f = open("Orange_Server/MelonChart.dat", 'r')
     for i in range(1, 101):
         melonObject = MelonObject()
-        melonObject.title = title[i].text.strip()
-        melonObject.singer = singer[i].find('span').text.strip()
+        melonObject.title = f.readline()#title[i].text.strip()
+        melonObject.singer = f.readline()#singer[i].find('span').text.strip()
+	melonObject.url = f.readline()
+	melonObject.time = f.readline()
+	
         melonChart.append(melonObject)
-
+    f.close()
     melonChartForJSON = []
     for i in range(len(melonChart)):
-        melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title})
+        melonChartForJSON.append({"singer": melonChart[i].singer, "title": melonChart[i].title, "url": melonChart[i].url, "time": melonChart[i].time})
 
     #return HttpResponse(singer)
     return HttpResponse(json.dumps(melonChartForJSON, ensure_ascii=False))
@@ -103,17 +112,12 @@ def get_music_video_information(request):
     title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
     url = beautifulSoup.find_all('ol', {'class':'item-section'})
 
-#    infoListForJSON = []
-#    for i in range(len(title)):
     resultTitle = title[0].text
     resultURl = 'http://www.youtube.com' + url[0].find('a')['href']
 
     youtubeObject = YouTubeObject()
     youtubeObject.title = resultTitle
     youtubeObject.url = resultURl
-#    musicVideoInformationForJson = { "title" : youtubeObject.title,
-#      				     "url" : youtubeObject.url}
-#	infoListForJSON.append(youtubeObject)
 
     musicVideoInformationForJson = { "title" : youtubeObject.title,
                                      "url" : youtubeObject.url}
@@ -124,16 +128,20 @@ def search_music_video_information(request):
     query = request.GET['query'].encode('utf8')
 
     url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query)
+    print (url)
     handle = urllib2.urlopen(url)
     data = handle.read()
     beautifulSoup = BeautifulSoup(data)
-    title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
-    url = beautifulSoup.find_all('h3', {'class':'yt-lockup-title'})
+
+    contents = beautifulSoup.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
 
     musicVideoInformationForJson = []
-    for i in range(len(title)):
-        resultTitle = title[i].text
-	resultUrl = 'http://www.youtube.com' + url[i].find('a')['href']
-        musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl})
+
+    for i in range(len(contents)):
+        resultTitle = contents[i].find('h3', {'class':'yt-lockup-title'}).text
+        resultUrl = 'http://www.youtube.com' + contents[i].find('h3', {'class':'yt-lockup-title'}).find('a')['href']
+        resultTime = contents[i].find('span', {'class':'video-time'}).text
+        
+        musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
