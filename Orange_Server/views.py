@@ -105,10 +105,11 @@ def search_music_video_information(request):
     query = request.GET['query'].encode('utf8')
 
     url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query)
-    print (url)
+    
     handle = urllib2.urlopen(url)
     data = handle.read()
-    beautifulSoup = BeautifulSoup(data)
+    handle.close()
+    beautifulSoup = BeautifulSoup(data, from_encoding='utf-8')
 
     contents = beautifulSoup.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
 
