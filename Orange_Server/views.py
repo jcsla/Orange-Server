@@ -83,8 +83,11 @@ def get_music_video_information(request):
     title = request.GET['title'].encode('utf8')
 
     url = 'http://www.youtube.com/results?search_query=' + urllib.quote(singer) + '+' + urllib.quote(title)
+
     handle = urllib2.urlopen(url)
     data = handle.read()
+    handle.close()
+
     beautifulSoup = BeautifulSoup(data)
     title = beautifulSoup.find_all('a', {'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link ' })
     url = beautifulSoup.find_all('ol', {'class':'item-section'})
@@ -109,11 +112,39 @@ def search_music_video_information(request):
     handle = urllib2.urlopen(url)
     data = handle.read()
     handle.close()
+
     beautifulSoup = BeautifulSoup(data, from_encoding='utf-8')
 
     contents = beautifulSoup.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
 
     musicVideoInformationForJson = []
+
+    for i in range(len(contents)):
+        resultTitle = contents[i].find('h3', {'class':'yt-lockup-title'}).text
+        resultUrl = 'http://www.youtube.com' + contents[i].find('h3', {'class':'yt-lockup-title'}).find('a')['href']
+        resultTime = contents[i].find('span', {'class':'video-time'}).text
+        
+        musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
+
+    return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
+
+def search_music_video_information_for_page(request):
+    query = request.GET['query'].encode('utf8')
+    page = request.GET['page'].encode('utf8')
+
+    url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query) + '&page=' + urllib.quote(page)
+    
+    handle = urllib2.urlopen(url)
+    data = handle.read()
+    handle.close()
+    
+    bs = BeautifulSoup(data, from_encoding='utf-8')
+
+    contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
+
+    musicVideoInformationForJson = []
+
+    next = bs.find_all('a', {'class':'yt-uix-button  yt-uix-pager-button yt-uix-sessionlink yt-uix-button-default yt-uix-button-size-default'})
 
     for i in range(len(contents)):
         resultTitle = contents[i].find('h3', {'class':'yt-lockup-title'}).text

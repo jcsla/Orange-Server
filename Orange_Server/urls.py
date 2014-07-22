@@ -10,6 +10,7 @@ from Orange_Server.views import get_billboard_chart
 from Orange_Server.views import get_oricon_chart
 from Orange_Server.views import get_music_video_information
 from Orange_Server.views import search_music_video_information
+from Orange_Server.views import search_music_video_information_for_page
 
 urlpatterns = patterns('',
     # Examples:
@@ -19,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^getMelonChart', get_melon_chart),
     url(r'^getMusicVideoInformation', get_music_video_information),
+    url(r'^searchMusicVideoInformationForPage', search_music_video_information_for_page),
     url(r'^searchMusicVideoInformation', search_music_video_information),
     url(r'^getBillboardChart', get_billboard_chart),
     url(r'^getOriconChart', get_oricon_chart),
