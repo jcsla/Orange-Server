@@ -6,6 +6,7 @@ import json
 import re
 import datetime
 import os
+import django.db
 
 from django.http import HttpResponse
 from bs4 import BeautifulSoup
@@ -17,6 +18,7 @@ from Orange_Server.models import YouTubeObject
 
 import thread
 import time    
+from PlayLists.models import PlayList
 
 def get_melon_chart(request):
     melonChart = []
@@ -104,7 +106,18 @@ def get_music_video_information(request):
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
 
+def Test():
+    #p1 = PlayList(name='First', cnt='0')
+    #p1.save()
+
+    list = PlayList.objects.filter(name='Second')
+
+    if len(list) == 0:
+        print (len(list))
+
 def search_music_video_information(request):
+    Test()
+
     query = request.GET['query'].encode('utf8')
 
     url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query)

@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'PlayLists',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,10 +59,17 @@ WSGI_APPLICATION = 'Orange_Server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'Orange',
+        'USER': 'root',
+        'PASSWORD': '7615',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+DATABASE_OPTION = {'charset':'utf8'}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
