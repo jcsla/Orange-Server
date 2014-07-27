@@ -15,7 +15,7 @@ from Orange_Server.views import search_play_list
 from Orange_Server.views import get_recent_play_list
 from Orange_Server.views import get_play_list
 from Orange_Server.views import get_high_cnt_play_list
-from Orange_Server.views import update_play_list
+from Orange_Server.views import upload_play_list
 
 urlpatterns = patterns('',
     # Examples:
