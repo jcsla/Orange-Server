@@ -107,13 +107,28 @@ def get_music_video_information(request):
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
 
 def Test():
-    #p1 = PlayList(name='First', cnt='0')
-    #p1.save()
+    """
+    p1 = PlayList(name='Melon_Chart_140727', cnt='0')
+    p1.save()
+    p2 = PlayList(name='Billboard_Chart_140727', cnt='0')
+    p2.save()
+    p3 = PlayList(name='Oricon_Chart_140727', cnt='0')
+    p3.save()
 
-    list = PlayList.objects.filter(name='Second')
+    p4 = PlayList(name='Third', cnt='0')
+    p4.save()
+    p5 = PlayList(name='4th', cnt='0')
+    p5.save()
+    """
+    #list = PlayList.objects.filter(name='Second')
 
-    if len(list) == 0:
-        print (len(list))
+    #if len(list) == 0:
+        #print (len(list))
+    #PlayList.objects.filter(id=2).update(name='Second')
+
+    list = PlayList.objects.order_by("-id")[0:5]
+    for i in range(len(list)):
+        print (list[i])
 
 def search_music_video_information(request):
     Test()
@@ -167,3 +182,92 @@ def search_music_video_information_for_page(request):
         musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
+
+def search_play_list(request):
+    query = request.GET['query'].encode('utf8')
+
+    # select db
+    lists = PlayList.objects.filter(name__contains=query)
+
+    resultPlayListForJSON = []
+    for i in range(len(lists)):
+        resultPlayList = lists[i]
+        
+        resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
+    
+    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+
+def get_recent_play_list(request):
+    lists = PlayList.objects.order_by("-id")[0:5]
+
+    resultPlayListForJSON = []
+    for i in range(len(lists)):
+        resultPlayList = lists[i]
+        
+        resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
+    
+    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+
+def upload_play_list(request):
+    if request.method == "POST":
+        return HttpResponse("POST")
+
+    else:
+        return HttpResponse("Error")
+
+
+def get_high_cnt_play_list(request):
+    lists = PlayList.objects.order_by("-cnt")[0:5]
+
+    resultPlayListForJSON = []
+    for i in range(len(lists)):
+        resultPlayList = lists[i]
+        
+        resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
+    
+    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+
+
+def get_play_list(request):
+    title = request.GET['title'].encode('utf8')
+
+    try:
+        resultPlayList = PlayList.objects.get(name=title)
+        
+        resultPlayList.cnt = resultPlayList.cnt + 1
+        resultPlayList.save()
+
+        path = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % title
+        #path = "Orange_Server/PlayLists/%s.dat" % title
+        
+        f = open(path, 'r')
+
+        playList = []
+        while 1:
+            playListObject = MelonObject()
+            title = f.readline().strip()
+            if not title: break
+
+            playListObject.title = title
+            playListObject.singer = f.readline().strip()
+            playListObject.url = f.readline().strip()
+            playListObject.time = f.readline().strip()
+            playList.append(playListObject)
+
+        f.close()
+
+        playListForJSON = []
+        for i in range(len(playList)):
+            playListForJSON.append({
+                "singer": playList[i].singer, 
+                "title": playList[i].title, 
+                "url": playList[i].url, 
+                "time": playList[i].time})
+
+        return HttpResponse(json.dumps(playListForJSON, ensure_ascii=False))
+
+    except PlayList.DoesNotExist:
+        return HttpResponse()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+
+    

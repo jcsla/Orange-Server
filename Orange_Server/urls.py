@@ -11,6 +11,11 @@ from Orange_Server.views import get_oricon_chart
 from Orange_Server.views import get_music_video_information
 from Orange_Server.views import search_music_video_information
 from Orange_Server.views import search_music_video_information_for_page
+from Orange_Server.views import search_play_list
+from Orange_Server.views import get_recent_play_list
+from Orange_Server.views import get_play_list
+from Orange_Server.views import get_high_cnt_play_list
+from Orange_Server.views import update_play_list
 
 urlpatterns = patterns('',
     # Examples:
@@ -24,6 +29,12 @@ urlpatterns = patterns('',
     url(r'^searchMusicVideoInformation', search_music_video_information),
     url(r'^getBillboardChart', get_billboard_chart),
     url(r'^getOriconChart', get_oricon_chart),
+    url(r'^searchPlayList', search_play_list),
+    url(r'^getRecentPlayList', get_recent_play_list),
+    url(r'^getPlayList', get_play_list),
+    url(r'^getHighHitCountPlayList', get_high_cnt_play_list),
+    url(r'^updatePlayList', update_play_list),
+
 )
 
 urlpatterns += staticfiles_urlpatterns()
