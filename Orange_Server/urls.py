@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^getRecentPlayList', get_recent_play_list),
     url(r'^getPlayList', get_play_list),
     url(r'^getHighHitCountPlayList', get_high_cnt_play_list),
-    url(r'^updatePlayList', upload_play_list),
+    url(r'^uploadPlayList', upload_play_list),
 
 )
 
