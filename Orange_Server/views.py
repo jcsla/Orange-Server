@@ -213,7 +213,7 @@ def upload_play_list(request):
         return HttpResponse("POST")
 
     #else if request.method == "GET":
-    else
+    else:
         return HttpResponse("GET")
 
 
