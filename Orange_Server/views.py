@@ -212,8 +212,8 @@ def upload_play_list(request):
     if request.method == "POST":
         return HttpResponse("POST")
 
-    else:
-        return HttpResponse("Error")
+    else if request.method == "GET":
+        return HttpResponse("GET")
 
 
 def get_high_cnt_play_list(request):
