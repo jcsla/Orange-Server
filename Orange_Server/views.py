@@ -7,7 +7,6 @@ import re
 import datetime
 import os
 import django.db
-from Crypto.Cipher import DES
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -18,6 +17,7 @@ from datetime import timedelta, date
 
 from Orange_Server.models import MelonObject
 from Orange_Server.models import YouTubeObject
+from Orange_Server.Security import DES
 
 import thread
 import time    
@@ -112,16 +112,18 @@ def get_music_video_information(request):
 @method_decorator(csrf_exempt)
 def Test(request):
     if request.method == 'POST':
-	data = request.body
-	data = data.encode("hex")
-	des_key = 'b0d9b872'
-	des = DES.new(des_key, DES.MODE_EBC)
-	msg = des.decrypt(data)
-	
-	return HttpResponse(msg)	
+        data = request.body
+
+        key = 'b0d9b872'
+        iv = 'b0d9b872'
+
+        des = DES(iv, key)
+        decr_data = des.decrypt(file_data)
+
+        return HttpResponse(decr_data)	
 
     else:
-	return HttpResponse("")
+        return HttpResponse("")
 
 def search_music_video_information(request):
     query = request.GET['query'].encode('utf8')
