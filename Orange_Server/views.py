@@ -7,7 +7,10 @@ import re
 import datetime
 import os
 import django.db
+from Crypto.Cipher import DES
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from bs4 import BeautifulSoup
 
@@ -106,33 +109,21 @@ def get_music_video_information(request):
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
 
-def Test():
-    """
-    p1 = PlayList(name='Melon_Chart_140727', cnt='0')
-    p1.save()
-    p2 = PlayList(name='Billboard_Chart_140727', cnt='0')
-    p2.save()
-    p3 = PlayList(name='Oricon_Chart_140727', cnt='0')
-    p3.save()
+@method_decorator(csrf_exempt)
+def Test(request):
+    if request.method == 'POST':
+	data = request.body
+	data = data.encode("hex")
+	des_key = 'b0d9b872'
+	des = DES.new(des_key, DES.MODE_EBC)
+	msg = des.decrypt(data)
+	
+	return HttpResponse(msg)	
 
-    p4 = PlayList(name='Third', cnt='0')
-    p4.save()
-    p5 = PlayList(name='4th', cnt='0')
-    p5.save()
-    """
-    #list = PlayList.objects.filter(name='Second')
-
-    #if len(list) == 0:
-        #print (len(list))
-    #PlayList.objects.filter(id=2).update(name='Second')
-
-    list = PlayList.objects.order_by("-id")[0:5]
-    for i in range(len(list)):
-        print (list[i])
+    else:
+	return HttpResponse("")
 
 def search_music_video_information(request):
-    Test()
-
     query = request.GET['query'].encode('utf8')
 
     url = 'http://www.youtube.com/results?search_query=' + urllib.quote(query)
@@ -183,7 +174,7 @@ def search_music_video_information_for_page(request):
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
 
-def search_play_list(request):
+def search_play_list(request):   
     query = request.GET['query'].encode('utf8')
 
     # select db
@@ -197,7 +188,7 @@ def search_play_list(request):
     
     return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
 
-def get_recent_play_list(request):
+def get_recent_play_list(request):   
     lists = PlayList.objects.order_by("-id")[0:5]
 
     resultPlayListForJSON = []
@@ -205,17 +196,52 @@ def get_recent_play_list(request):
         resultPlayList = lists[i]
         
         resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
-    
+     
     return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
 
+@method_decorator(csrf_exempt)
 def upload_play_list(request):
-    if request.method == "POST":
-        return HttpResponse("POST")
+    if request.method == 'POST':
+	data = request.body
+	contents = json.loads(data)
 
-    elif request.method == "GET":
-    #else:
-        return HttpResponse("GET")
+	chart_name = contents['chart_name']
+	chart_name = chart_name.lower()
+	chart_list = contents['chart_list']
+	
+	lists = PlayList.objects.filter(name=chart_name)
+	
+	if len(lists):
+#	    p = PlayList.objects.get(name=chart_name)
+#	    p.delete()
+	    return HttpResponse("False")
+	
+	url = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % chart_name
+	
+	file_data = ""
+	for i in range(0, len(chart_list)):
+	    tmp_title = chart_list[i]['title']
+	    tmp_singer = chart_list[i]['singer']
+	    tmp_url = chart_list[i]['url']
+	    tmp_time = chart_list[i]['time']
 
+	    file_data = file_data + tmp_title + "\n" + tmp_singer + "\n" + tmp_url + "\n" + tmp_time + "\n"
+	
+	file_data = file_data.encode('utf-8')
+	f = open(url, 'w')
+	f.write(file_data)
+	f.close()
+
+	play_list = PlayList(name=chart_name, cnt='0')
+	play_list.save()
+	
+        return HttpResponse(file_data)
+
+    elif request.method == 'GET':
+        return HttpResponse('')
+
+    else: 
+	return Http404
 
 def get_high_cnt_play_list(request):
     lists = PlayList.objects.order_by("-cnt")[0:5]
