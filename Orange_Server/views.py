@@ -118,7 +118,7 @@ def Test(request):
         iv = 'b0d9b872'
 
         des = DES(iv, key)
-        decr_data = des.decrypt(file_data)
+        decr_data = des.decrypt(data)
 
         return HttpResponse(decr_data)	
 
@@ -180,7 +180,7 @@ def search_play_list(request):
     query = request.GET['query'].encode('utf8')
 
     # select db
-    lists = PlayList.objects.filter(name__contains=query)
+    lists = PlayList.objects.filter(name__icontains=query)
 
     resultPlayListForJSON = []
     for i in range(len(lists)):
@@ -205,10 +205,16 @@ def get_recent_play_list(request):
 def upload_play_list(request):
     if request.method == 'POST':
 	data = request.body
+
+	key = 'b0d9b872'
+	iv = 'b0d9b872'
+	des = DES(iv, key)
+	data = des.decrypt(data)
+
 	contents = json.loads(data)
 
 	chart_name = contents['chart_name']
-	chart_name = chart_name.lower()
+#	chart_name = chart_name.lower()
 	chart_list = contents['chart_list']
 	
 	lists = PlayList.objects.filter(name=chart_name)
@@ -230,14 +236,14 @@ def upload_play_list(request):
 	    file_data = file_data + tmp_title + "\n" + tmp_singer + "\n" + tmp_url + "\n" + tmp_time + "\n"
 	
 	file_data = file_data.encode('utf-8')
-	f = open(url, 'w')
-	f.write(file_data)
-	f.close()
+	#f = open(url, 'w')
+	#f.write(file_data)
+	#f.close()
 
-	play_list = PlayList(name=chart_name, cnt='0')
-	play_list.save()
+	#play_list = PlayList(name=chart_name, cnt='0')
+	#play_list.save()
 	
-        return HttpResponse(file_data)
+        return HttpResponse('True')
 
     elif request.method == 'GET':
         return HttpResponse('')
