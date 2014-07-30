@@ -1,4 +1,4 @@
-# -*- coding: cp949 -*-
+# -*- coding: utf8 -*-
 
 import urllib
 import urllib2
@@ -178,28 +178,38 @@ def search_music_video_information_for_page(request):
 
 def search_play_list(request):   
     query = request.GET['query'].encode('utf8')
-
+    page_num = request.GET['page'].encode('utf8')
+    page_num = int(page_num) - 1
     # select db
     lists = PlayList.objects.filter(name__icontains=query)
+    page_cnt = (len(lists) / 50) + 1
 
     resultPlayListForJSON = []
-    for i in range(len(lists)):
+    start_i = int(page_num) * 50
+    for i in range(start_i, len(lists)):
+	if (i % 50 == 49): break
+
         resultPlayList = lists[i]
-        
         resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
     
-    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+    return HttpResponse(json.dumps({"page_cnt":page_cnt, "play_list":resultPlayListForJSON}, ensure_ascii=False))
 
 def get_recent_play_list(request):   
-    lists = PlayList.objects.order_by("-id")[0:5]
-
+    page_num = request.GET['page'].encode('utf8')
+    page_num = int(page_num) - 1
+    lists = PlayList.objects.order_by("-id")
+    page_cnt = (len(lists) / 50) + 1
+    
     resultPlayListForJSON = []
-    for i in range(len(lists)):
+    start_i = page_num * 50
+    for i in range(start_i, len(lists)):
+	if (i % 50 == 49): break
+
         resultPlayList = lists[i]
-        
         resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
      
-    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+#    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
+    return HttpResponse(json.dumps({"page_cnt":page_cnt, "play_list":resultPlayListForJSON}, ensure_ascii=False))
 
 @method_decorator(csrf_exempt)
 def upload_play_list(request):
@@ -212,9 +222,8 @@ def upload_play_list(request):
 	data = des.decrypt(data)
 
 	contents = json.loads(data)
-
+	
 	chart_name = contents['chart_name']
-#	chart_name = chart_name.lower()
 	chart_list = contents['chart_list']
 	
 	lists = PlayList.objects.filter(name=chart_name)
@@ -223,27 +232,27 @@ def upload_play_list(request):
 #	    p = PlayList.objects.get(name=chart_name)
 #	    p.delete()
 	    return HttpResponse("False")
-	
-	url = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % chart_name
+
+	play_list = PlayList(name=chart_name, cnt='0')
+	play_list.save()
+
+	url = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % play_list.id
 	
 	file_data = ""
 	for i in range(0, len(chart_list)):
 	    tmp_title = chart_list[i]['title']
-	    tmp_singer = chart_list[i]['singer']
 	    tmp_url = chart_list[i]['url']
 	    tmp_time = chart_list[i]['time']
 
-	    file_data = file_data + tmp_title + "\n" + tmp_singer + "\n" + tmp_url + "\n" + tmp_time + "\n"
+	    file_data = file_data + tmp_title + "\n" + tmp_url + "\n" + tmp_time + "\n"
 	
 	file_data = file_data.encode('utf-8')
-	#f = open(url, 'w')
-	#f.write(file_data)
-	#f.close()
-
-	#play_list = PlayList(name=chart_name, cnt='0')
-	#play_list.save()
 	
-        return HttpResponse('True')
+	f = open(url, 'w')
+	f.write(file_data)
+	f.close()
+	
+        return HttpResponse("True")
 
     elif request.method == 'GET':
         return HttpResponse('')
@@ -252,7 +261,7 @@ def upload_play_list(request):
 	return Http404
 
 def get_high_cnt_play_list(request):
-    lists = PlayList.objects.order_by("-cnt")[0:5]
+    lists = PlayList.objects.order_by("-cnt")[0:50]
 
     resultPlayListForJSON = []
     for i in range(len(lists)):
@@ -260,8 +269,7 @@ def get_high_cnt_play_list(request):
         
         resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
     
-    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
-
+    return HttpResponse(json.dumps({"page_cnt":0, "play_list":resultPlayListForJSON}, ensure_ascii=False))
 
 def get_play_list(request):
     title = request.GET['title'].encode('utf8')
@@ -272,7 +280,7 @@ def get_play_list(request):
         resultPlayList.cnt = resultPlayList.cnt + 1
         resultPlayList.save()
 
-        path = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % title
+        path = "/home/jcsla/Orange_Server/Orange_Server/PlayLists/%s.dat" % resultPlayList.id
         #path = "Orange_Server/PlayLists/%s.dat" % title
         
         f = open(path, 'r')
@@ -284,7 +292,7 @@ def get_play_list(request):
             if not title: break
 
             playListObject.title = title
-            playListObject.singer = f.readline().strip()
+#            playListObject.singer = f.readline().strip()
             playListObject.url = f.readline().strip()
             playListObject.time = f.readline().strip()
             playList.append(playListObject)
@@ -294,7 +302,7 @@ def get_play_list(request):
         playListForJSON = []
         for i in range(len(playList)):
             playListForJSON.append({
-                "singer": playList[i].singer, 
+#                "singer": playList[i].singer, 
                 "title": playList[i].title, 
                 "url": playList[i].url, 
                 "time": playList[i].time})
