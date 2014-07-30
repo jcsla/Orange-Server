@@ -22,6 +22,7 @@ from Orange_Server.Security import DES
 import thread
 import time    
 from PlayLists.models import PlayList
+from InstallCount.models import InstallCount
 
 def get_melon_chart(request):
     melonChart = []
@@ -111,18 +112,8 @@ def get_music_video_information(request):
 
 @method_decorator(csrf_exempt)
 def Test(request):
-    if request.method == 'POST':
-        data = request.body
+    
 
-        key = 'b0d9b872'
-        iv = 'b0d9b872'
-
-        des = DES(iv, key)
-        decr_data = des.decrypt(data)
-
-        return HttpResponse(decr_data)	
-
-    else:
         return HttpResponse("")
 
 def search_music_video_information(request):
@@ -312,5 +303,25 @@ def get_play_list(request):
     except PlayList.DoesNotExist:
         return HttpResponse()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 
+def add_installed_count(request):
+    data = InstallCount.objects.all()
+    if(len(data) == 0):
+        ic = InstallCount(count=1)
+        ic.save()
 
-    
+        return HttpResponse()
+
+    ic = InstallCount.objects.get(id=1)
+    ic.count = ic.count + 1
+    ic.save()
+
+    return HttpResponse()
+
+def get_installed_count(request):
+    try:
+        ic = InstallCount.objects.get(id=1)
+        return HttpResponse(str(ic.count))
+
+    except InstallCount.DoesNotExist:
+        return HttpResponse()
+

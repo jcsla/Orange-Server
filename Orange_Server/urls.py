@@ -16,6 +16,8 @@ from Orange_Server.views import get_recent_play_list
 from Orange_Server.views import get_play_list
 from Orange_Server.views import get_high_cnt_play_list
 from Orange_Server.views import upload_play_list
+from Orange_Server.views import add_installed_count
+from Orange_Server.views import get_installed_count
 from Orange_Server.views import Test
 
 urlpatterns = patterns('',
@@ -35,7 +37,10 @@ urlpatterns = patterns('',
     url(r'^getPlayList', get_play_list),
     url(r'^getHighHitCountPlayList', get_high_cnt_play_list),
     url(r'^uploadPlayList', upload_play_list),
+    url(r'^addInstalledCount', add_installed_count),
+    url(r'^getInstalledCount', get_installed_count),
     url(r'^test', Test),
+
 )
 
 urlpatterns += staticfiles_urlpatterns()
