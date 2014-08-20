@@ -127,7 +127,7 @@ def search_music_video_information(request):
 
     beautifulSoup = BeautifulSoup(data, from_encoding='utf-8')
 
-    contents = beautifulSoup.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
+    contents = beautifulSoup.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video clearfix yt-uix-tile'})
 
     musicVideoInformationForJson = []
 
@@ -152,7 +152,7 @@ def search_music_video_information_for_page(request):
     
     bs = BeautifulSoup(data, from_encoding='utf-8')
 
-    contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video yt-uix-tile clearfix'})
+    contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video clearfix yt-uix-tile'})
 
     musicVideoInformationForJson = []
 

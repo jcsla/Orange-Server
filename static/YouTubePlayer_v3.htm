@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0052)http://115.71.236.224:8081/static/YouTubePlayer.html -->
+<HTML><HEAD>
+
+<SCRIPT src="YouTubePlayer_files/jsapi.js"></SCRIPT>
+
+<SCRIPT>google.load('jquery','1.6.2');</SCRIPT>
+
+<SCRIPT>
+        var tag = document.createElement('script');
+        tag.src = "http://www.youtube.com/player_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		var timer;
+        var ytplayer;
+        function onYouTubePlayerAPIReady() {
+            ytplayer = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: 'Azf-LrBy24Y',
+                playerVars: { html5: 1, 'autoplay': 0, 'controls': 0 },
+				events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+					"onError": onYTError
+                }
+            });
+
+			
+        }
+
+        function updateHTML(elmId, value) {
+            document.getElementById(elmId).innerHTML = value;
+        }
+
+        function updatePlayerInfo() {
+			
+			
+			window.external.SetSeekbar(ytplayer.getCurrentTime(),ytplayer.getDuration());
+
+          
+        }
+
+
+
+        function playVideo() {
+            ytplayer.playVideo();
+
+        }
+
+        function pauseVideo() {
+            ytplayer.pauseVideo();
+        }
+
+        function loadVideoById(id) {
+
+
+			ytplayer.loadVideoById(id);
+			
+        }
+
+		 function testVideoById() {
+
+			var s =  document.getElementById('playerContent').value;
+						 alert(s);
+		
+			ytplayer.loadVideoById(s);
+			
+        }
+
+	function cueNewVideo(id, startSeconds) {
+		ytplayer.cueVideoById(id, startSeconds);
+	}
+
+	function setVolume(newVolume) {
+		ytplayer.setVolume(newVolume);
+	}
+
+	function getVolume() {
+		return ytplayer.getVolume();
+	}
+
+	function buttontest() {
+	  alert("test");
+	}
+	
+	function mute() {
+		ytplayer.mute();
+	}
+
+	function unMute() {
+		ytplayer.unMute();
+	}
+
+	function getCurrentTime() {
+
+		return ytplayer.getCurrentTime();
+	}
+
+	function getDuration() {
+		return ytplayer.getDuration();
+	}
+
+	function seekTo(seconds) {
+		ytplayer.seekTo(seconds, true);
+	}
+
+
+	function setQuality(newQuality) {
+	  ytplayer.setPlaybackQuality(newQuality);
+	}
+
+	function onYTError(event) {
+       ytplayer.loadVideoById('Azf-LrBy24Y');
+	}
+
+    function onPlayerReady(event) {
+           setInterval(updatePlayerInfo, 600);
+		   window.external.OnReady();
+	}
+
+    function onPlayerStateChange(event) {
+
+                switch (event.data) {
+                    case -1:
+                    
+                        break;
+                    case ytplayer.PlayerState.ENDED:
+				                         
+                        break;
+                    case ytplayer.PlayerState.PLAYING:
+               
+						break;
+                    case ytplayer.PlayerState.PAUSED:
+
+                        break;
+                    case ytplayer.PlayerState.BUFFERING:
+                     
+                        break;
+                    case ytplayer.PlayerState.CUED:
+                 
+                        break;
+				}
+	}
+
+	</SCRIPT>
+
+<META name=GENERATOR content="MSHTML 10.00.9200.16798"></HEAD>
+<BODY 
+style="PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px; PADDING-RIGHT: 0px" 
+scroll=no>
+<DIV id="player"></DIV>
+</BODY></HTML>

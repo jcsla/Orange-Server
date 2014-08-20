@@ -37,6 +37,11 @@ def set_file_info(id):
 			newHour = True
 			t = time.localtime()
 
+		elif(now.tm_min > t.tm_min):
+			newHour = True
+			newHour = True
+			t = time.localtime()
+
 		if newHour:			
 			# update melon_chart file
 			print("melon chart updating...")
@@ -72,9 +77,10 @@ def set_file_info(id):
 			f.write(info_data)
 			f.close()
 			print ("Update Complete Melon Chart!")
-
+		"""
 		if newDay:
 			# write billboard_chart file
+			
 			print ("billboard chart updating...")
 			url = 'http://www.billboard.com/charts/hot-100?page=%d'
 
@@ -88,7 +94,14 @@ def set_file_info(id):
 
         			for j in range(0, 10):
             				tmp_title = title[j+1].text.strip()
-            				tmp_singer = singer[j].find('a').text.strip()
+					tmp_singer = ""
+					try:
+            					tmp_singer = singer[j].find('a').text.strip()
+
+					except AttributeError:
+						tmp_singer = ""
+
+					print(tmp_singer)
             									
 					search_url = 'http://www.youtube.com/results?search_query=' + urllib.quote(tmp_title) + '+' + urllib.quote(tmp_singer)
                                 	handle = urllib2.urlopen(search_url)
@@ -115,11 +128,11 @@ def set_file_info(id):
 			# update oricon_chart file
 			print("oricon chart updaing...")
 			url = 'http://www.oricon.co.jp/rank/js/w/%s/more/%d/'
-
+			
     			d = datetime.date.today()
     			td = timedelta(days=0-d.weekday())
     			d = d + td
-
+			print(url % (d, 0))
 			info_data = ""
 			proceed = 0
     			for i in range(1, 7):
@@ -162,7 +175,7 @@ def set_file_info(id):
 			f.close()
 
 			print("Update Complete Oricon Chart")
-
+		"""
 		newDay = False
 		newHour = False					
 
