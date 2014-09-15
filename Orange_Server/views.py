@@ -24,6 +24,10 @@ import time
 from PlayLists.models import PlayList
 from InstallCount.models import InstallCount
 
+# Using YouTube Search Api
+import gdata.youtube
+import gdata.youtube.service
+
 def get_melon_chart(request):
     melonChart = []
     f = open("/home/jcsla/Orange_Server/Orange_Server/MelonChart.dat", 'r')
@@ -166,6 +170,30 @@ def search_music_video_information_for_page(request):
         musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
+
+def search_music_video_using_api(request):
+    term = request.GET['query'].encode('utf8')
+    page = request.GET['page'].encode('utf8')
+
+    yt_service = gdata.youtube.service.YouTubeService()
+
+    query = gdata.youtube.service.YouTubeVideoQuery()
+    query.vq = term
+    query.orderby = 'relevance'
+    query.racy = 'include'
+    query.start_index = page
+    feed = yt_service.YouTubeQuery(query)
+    
+    search_resultForJson = []
+    for entry in feed.entry:
+        title = entry.media.title.text
+        url = entry.media.player.url
+        minute = int(entry.media.duration.seconds) / 60
+        second = int(entry.media.duration.seconds) % 60
+        time = '%02d:%02d' % (minute, second)
+        search_resultForJson.append({"title" : title, "url" : url, "time" : time})
+
+    return HttpResponse(json.dumps(search_resultForJson, ensure_ascii=False))
 
 def search_play_list(request):   
     query = request.GET['query'].encode('utf8')

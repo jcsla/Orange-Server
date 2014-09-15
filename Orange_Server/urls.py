@@ -11,6 +11,7 @@ from Orange_Server.views import get_oricon_chart
 from Orange_Server.views import get_music_video_information
 from Orange_Server.views import search_music_video_information
 from Orange_Server.views import search_music_video_information_for_page
+from Orange_Server.views import search_music_video_using_api
 from Orange_Server.views import search_play_list
 from Orange_Server.views import get_recent_play_list
 from Orange_Server.views import get_play_list
@@ -39,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^uploadPlayList', upload_play_list),
     url(r'^addInstalledCount', add_installed_count),
     url(r'^getInstalledCount', get_installed_count),
+    url(r'^searchMusicVideoUsingApi', search_music_video_using_api),
     url(r'^test', Test),
 
 )
