@@ -157,19 +157,44 @@ def search_music_video_information_for_page(request):
     bs = BeautifulSoup(data, from_encoding='utf-8')
 
     contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video clearfix yt-uix-tile'})
-
+    
     musicVideoInformationForJson = []
 
-    next = bs.find_all('a', {'class':'yt-uix-button  yt-uix-pager-button yt-uix-sessionlink yt-uix-button-default yt-uix-button-size-default'})
+    #next = bs.find_all('a', {'class':'yt-uix-button  yt-uix-pager-button yt-uix-sessionlink yt-uix-button-default yt-uix-button-size-default'})
 
-    for i in range(len(contents)):
-        resultTitle = contents[i].find('h3', {'class':'yt-lockup-title'}).text
-        resultUrl = 'http://www.youtube.com' + contents[i].find('h3', {'class':'yt-lockup-title'}).find('a')['href']
-        resultTime = contents[i].find('span', {'class':'video-time'}).text
+    if len(contents) == 0:
+        musicVideoInformationForJson = search_using_api(query, page)
+
+    else:
+        for i in range(len(contents)):
+            resultTitle = contents[i].find('h3', {'class':'yt-lockup-title'}).text
+            resultUrl = 'http://www.youtube.com' + contents[i].find('h3', {'class':'yt-lockup-title'}).find('a')['href']
+            resultTime = contents[i].find('span', {'class':'video-time'}).text
         
-        musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
+            musicVideoInformationForJson.append({"title" : resultTitle, "url" : resultUrl, "time" : resultTime})
 
     return HttpResponse(json.dumps(musicVideoInformationForJson, ensure_ascii=False))
+
+def search_using_api(term, page):
+    yt_service = gdata.youtube.service.YouTubeService()
+
+    query = gdata.youtube.service.YouTubeVideoQuery()
+    query.vq = term
+    query.orderby = 'relevance'
+    query.racy = 'include'
+    query.start_index = page
+    feed = yt_service.YouTubeQuery(query)
+    
+    search_resultForJson = []
+    for entry in feed.entry:
+        title = entry.media.title.text
+        url = entry.media.player.url
+        minute = int(entry.media.duration.seconds) / 60
+        second = int(entry.media.duration.seconds) % 60
+        time = '%02d:%02d' % (minute, second)
+        search_resultForJson.append({"title" : title, "url" : url, "time" : time})
+
+    return search_resultForJson
 
 def search_music_video_using_api(request):
     term = request.GET['query'].encode('utf8')
