@@ -41,7 +41,7 @@ def set_file_info(id):
 			newHour = True
 			newHour = True
 			t = time.localtime()
-
+		
 		if newHour:			
 			# update melon_chart file
 			print("melon chart updating...")
@@ -77,10 +77,10 @@ def set_file_info(id):
 			f.write(info_data)
 			f.close()
 			print ("Update Complete Melon Chart!")
-		"""
+		
 		if newDay:
 			# write billboard_chart file
-			
+				
 			print ("billboard chart updating...")
 			url = 'http://www.billboard.com/charts/hot-100?page=%d'
 
@@ -124,7 +124,7 @@ def set_file_info(id):
 			f.close()
 			
 			print("Update Complete Billboard Chart")
-			
+			"""
 			# update oricon_chart file
 			print("oricon chart updaing...")
 			url = 'http://www.oricon.co.jp/rank/js/w/%s/more/%d/'
@@ -173,9 +173,9 @@ def set_file_info(id):
 			f = open("OriconChart.dat", 'w')
 			f.write(info_data)
 			f.close()
-
+			
 			print("Update Complete Oricon Chart")
-		"""
+			"""
 		newDay = False
 		newHour = False					
 

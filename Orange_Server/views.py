@@ -156,7 +156,7 @@ def search_music_video_information_for_page(request):
     
     bs = BeautifulSoup(data, from_encoding='utf-8')
 
-    contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video clearfix yt-uix-tile'})
+    contents = bs.find_all('div', {'class':'yt-lockup yt-lockup-tile yt-lockup-video vve-check clearfix yt-uix-tile'})
     
     musicVideoInformationForJson = []
 
@@ -247,10 +247,11 @@ def get_recent_play_list(request):
     resultPlayListForJSON = []
     start_i = page_num * 50
     for i in range(start_i, len(lists)):
-	if (i % 50 == 49): break
+	#if (i % 50 == 49): break
 
         resultPlayList = lists[i]
         resultPlayListForJSON.append({"title" : resultPlayList.name, "hits_count" : resultPlayList.cnt})
+	if (i % 50 == 49): break
      
 #    return HttpResponse(json.dumps(resultPlayListForJSON, ensure_ascii=False))
     return HttpResponse(json.dumps({"page_cnt":page_cnt, "play_list":resultPlayListForJSON}, ensure_ascii=False))
